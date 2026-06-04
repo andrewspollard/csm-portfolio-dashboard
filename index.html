@@ -204,8 +204,8 @@ tr:hover td { background: #f8fafc; }
 
 /* Metric Tooltips */
 .metric-tip { position:relative; display:inline-flex; align-items:center; justify-content:center; width:14px; height:14px; border-radius:50%; background:#e2e8f0; color:#64748b; font-size:9px; font-weight:700; cursor:help; margin-left:4px; vertical-align:middle; }
-.metric-tip .tip-text { visibility:hidden; opacity:0; position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%); background:#1a1f2e; color:#fff; padding:8px 12px; border-radius:6px; font-size:11px; font-weight:400; white-space:normal; max-width:280px; z-index:200; line-height:1.4; box-shadow:0 4px 12px rgba(0,0,0,.15); transition:opacity .15s,visibility .15s; text-transform:none; letter-spacing:normal; }
-.metric-tip:hover .tip-text { visibility:visible; opacity:1; }
+.metric-tip .tip-text { display:none; position:fixed; background:#1a1f2e; color:#fff; padding:10px 14px; border-radius:6px; font-size:11px; font-weight:400; white-space:normal; max-width:300px; min-width:200px; z-index:9999; line-height:1.5; box-shadow:0 4px 12px rgba(0,0,0,.2); pointer-events:none; }
+.metric-tip:hover .tip-text { display:block; }
 </style>
 </head>
 <body>
@@ -696,6 +696,22 @@ tr:hover td { background: #f8fafc; }
         });
     });
 })();
+</script>
+
+<script>
+document.querySelectorAll('.metric-tip').forEach(function(tip) {
+  tip.addEventListener('mouseenter', function() {
+    var box = tip.querySelector('.tip-text');
+    if (!box) return;
+    var rect = tip.getBoundingClientRect();
+    box.style.left = Math.max(10, rect.left + rect.width/2 - 150) + 'px';
+    box.style.top = (rect.top - box.offsetHeight - 8) + 'px';
+    // If tooltip would go off top, show below instead
+    if (rect.top - box.offsetHeight - 8 < 0) {
+      box.style.top = (rect.bottom + 8) + 'px';
+    }
+  });
+});
 </script>
 </body>
 </html>
