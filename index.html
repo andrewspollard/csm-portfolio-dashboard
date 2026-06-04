@@ -1,1 +1,696 @@
-<!-- content loaded from file_read above -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSM Portfolio Dashboard – Andrew Pollard</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fb;
+    color: #1a1f2e;
+    line-height: 1.5;
+    padding: 24px;
+}
+.container { max-width: 1600px; margin: 0 auto; }
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #e2e8f0;
+}
+.header h1 { font-size: 22px; font-weight: 700; color: #1a1f2e; }
+.header-meta { text-align: right; font-size: 13px; color: #64748b; }
+.header-meta .csm-name { font-weight: 600; color: #1a1f2e; }
+
+/* KPI Strip */
+.kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.kpi-card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 16px 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    border: 1px solid #e2e8f0;
+}
+.kpi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; margin-bottom: 4px; }
+.kpi-value { font-size: 24px; font-weight: 700; color: #1a1f2e; }
+.kpi-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+.kpi-value.red { color: #dc2626; }
+.kpi-value.amber { color: #d97706; }
+.kpi-value.green { color: #16a34a; }
+
+/* Action Items */
+.actions-section {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    border: 1px solid #e2e8f0;
+}
+.actions-section h2 { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: #1a1f2e; }
+.actions-grid { display: flex; gap: 12px; flex-wrap: wrap; }
+.action-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 13px;
+}
+.action-num {
+    background: #dc2626;
+    color: #fff;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+.action-text { color: #1a1f2e; }
+
+/* Timeline */
+.timeline-section {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    border: 1px solid #e2e8f0;
+}
+.timeline-section h2 { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: #1a1f2e; }
+.tl-row { display: flex; align-items: center; margin-bottom: 6px; gap: 12px; }
+.tl-label { width: 260px; font-size: 12px; font-weight: 500; color: #1a1f2e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 0; }
+.tl-bar-container { flex: 1; display: flex; align-items: center; gap: 8px; position: relative; }
+.tl-bar { height: 18px; border-radius: 3px; min-width: 4px; }
+.tl-days { font-size: 11px; color: #64748b; white-space: nowrap; }
+
+/* Risk Cards */
+.risk-section {
+    margin-bottom: 24px;
+}
+.risk-section h2 { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: #1a1f2e; }
+.risk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+.risk-card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 14px 16px;
+    border: 1px solid #fecaca;
+    border-left: 4px solid #dc2626;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.risk-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.risk-name { font-weight: 600; font-size: 14px; color: #1a1f2e; }
+.risk-arr { font-size: 12px; color: #64748b; font-weight: 500; }
+.risk-flags { display: flex; flex-wrap: wrap; gap: 6px; }
+.risk-flag {
+    background: #fef2f2;
+    color: #dc2626;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid #fecaca;
+}
+
+/* Table */
+.table-section {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    border: 1px solid #e2e8f0;
+    overflow-x: auto;
+}
+.table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.table-header h2 { font-size: 14px; font-weight: 700; color: #1a1f2e; }
+.search-input {
+    padding: 6px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 13px;
+    width: 220px;
+    outline: none;
+    font-family: inherit;
+}
+.search-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.1); }
+
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th {
+    text-align: left;
+    padding: 8px 10px;
+    background: #f8f9fb;
+    border-bottom: 2px solid #e2e8f0;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: #64748b;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+th:hover { background: #eef2f7; }
+th .sort-arrow { margin-left: 4px; font-size: 10px; }
+td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+tr:hover td { background: #f8fafc; }
+.name-cell { font-weight: 500; min-width: 180px; }
+.num-cell { text-align: right; font-variant-numeric: tabular-nums; }
+.text-cell { white-space: nowrap; }
+.products-cell { white-space: normal; max-width: 160px; font-size: 11px; }
+.link-cell { text-align: center; }
+
+.acct-link { color: #2563eb; text-decoration: none; font-weight: 500; }
+.acct-link:hover { text-decoration: underline; }
+.sfdc-link { color: #6366f1; text-decoration: none; font-weight: 600; font-size: 11px; padding: 3px 8px; background: #eef2ff; border-radius: 4px; }
+.sfdc-link:hover { background: #e0e7ff; }
+
+/* Color classes */
+.green { color: #16a34a; }
+.amber { color: #d97706; }
+.red { color: #dc2626; }
+.muted { color: #9ca3af; }
+
+/* Footer */
+.footer { text-align: center; font-size: 11px; color: #94a3b8; margin-top: 24px; padding-top: 16px; border-top: 1px solid #e2e8f0; }
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .kpi-strip { grid-template-columns: repeat(3, 1fr); }
+    body { padding: 12px; }
+}
+@media (max-width: 640px) {
+    .kpi-strip { grid-template-columns: 1fr; }
+    .header { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .header-meta { text-align: left; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- Header -->
+<div class="header">
+    <div>
+        <h1>CSM Portfolio Dashboard</h1>
+    </div>
+    <div class="header-meta">
+        <div class="csm-name">Andrew Pollard</div>
+        <div>Generated: June 3, 2026</div>
+        <div>12 Accounts &middot; Total ARR: $1,447,146</div>
+    </div>
+</div>
+
+<!-- KPI Strip -->
+<div class="kpi-strip">
+    <div class="kpi-card">
+        <div class="kpi-label">Total Portfolio ARR</div>
+        <div class="kpi-value">$1,447,146</div>
+        <div class="kpi-sub">12 active accounts</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-label">Avg Engagement Score</div>
+        <div class="kpi-value green">71.2%</div>
+        <div class="kpi-sub">Across all accounts</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-label">Accounts At Risk</div>
+        <div class="kpi-value red">1</div>
+        <div class="kpi-sub">Active at-risk alerts</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-label">Next Renewal</div>
+        <div class="kpi-value" style="font-size:18px;">Aug 04, 2026</div>
+        <div class="kpi-sub">GroupM</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-label">Overdue F2F</div>
+        <div class="kpi-value red">4</div>
+        <div class="kpi-sub">Accounts needing onsite visit</div>
+    </div>
+</div>
+
+<!-- Action Items -->
+<div class="actions-section">
+    <h2>Priority Actions</h2>
+    <div class="actions-grid">
+        <div class="action-item"><span class="action-num">1</span><span class="action-text">Schedule onsite F2F for Partnership HealthPlan of California</span></div>
+<div class="action-item"><span class="action-num">2</span><span class="action-text">Schedule onsite F2F for Precise Systems, Inc.</span></div>
+<div class="action-item"><span class="action-num">3</span><span class="action-text">Address NPS 6.0 detractor at Precise Systems, Inc.</span></div>
+<div class="action-item"><span class="action-num">4</span><span class="action-text">Resolve 1 at-risk alert(s) for Precise Systems, Inc.</span></div>
+<div class="action-item"><span class="action-num">5</span><span class="action-text">Schedule onsite F2F for Public Health Management Corporation</span></div>
+
+    </div>
+</div>
+
+<!-- Renewal Timeline -->
+<div class="timeline-section">
+    <h2>Renewal Timeline (Days to Renewal, colored by Engagement Score)</h2>
+    <div class="tl-row">
+        <div class="tl-label">GroupM</div>
+        <div class="tl-bar-container">
+            <div class="tl-bar" style="width:5.5%;background:#16a34a;" title="62 days – Aug 2026"></div>
+            <span class="tl-days">62d &middot; Aug 2026</span>
+        </div>
+    </div>
+<div class="tl-row">
+        <div class="tl-label">Viejas Casino & Resort</div>
+        <div class="tl-bar-container">
+            <div class="tl-bar" style="width:8.0%;background:#d97706;" title="90 days – Sep 2026"></div>
+            <span class="tl-days">90d &middot; Sep 2026</span>
+        </div>
+    </div>
+<div class="tl-row">
+        <div class="tl-label">Public Health Management Corporation</div>
+        <div class="tl-bar-container">
+            <div class="tl-bar" style="width:13.3%;background:#dc2626;" title="149 days – Oct 2026"></div>
+            <span class="tl-days">149d &middot; Oct 2026</span>
+        </div>
+    </div>
+<div class="tl-row">
+        <div class="tl-label">Tri Pointe Homes</div>
+        <div class="tl-bar-container">
+            <div class="tl-bar" style="width:16.1%;background:#d97706;" title="181 days – Dec 2026"></div>
+            <span class="tl-days">181d &middot; Dec 2026</span>
+        </div>
+    </div>
+<div class="tl-row">
+        <div class="tl-label">Crane Pumps & Systems</div>
+        <div class="tl-bar-container">
+            <div class="tl-bar" style="width:18.9%;background:#16a34a;" title="212 days – Jan 2027"></div>
+            <span class="tl-days">212d &middot; Jan 2027</span>
+        </div>
+    </div>
+<div class="tl-row">
+        <div class="tl-label">MarketAxess Corporation</div>
+        <div class="tl-bar-container">
+            <div class="tl-bar" style="width:31.6%;background:#16a34a;" title="355 days – May 2027"></div>
+            <span class="tl-days">355d &middot; May 2027</span>
+        </div>
+    </div>
+<div class="tl-row">
+        <div class="tl-label">Sheppard, Mullin, Richter & Hampton LLP</div>
+        <div class="tl-bar-container">
+            <div class="tl-bar" style="width:43.1%;background:#d97706;" title="485 days – Oct 2027"></div>
+            <span class="tl-days">485d &middot; Oct 2027</span>
+        </div>
+    </div>
+<div class="tl-row">
+        <div class="tl-label">Johnson, Mirmiran & Thompson, Inc.</div>
+        <div class="tl-bar-container">
+            <div class="tl-bar" style="width:46.3%;background:#16a34a;" title="520 days – Nov 2027"></div>
+            <span class="tl-days">520d &middot; Nov 2027</span>
+        </div>
+    </div>
+<div class="tl-row">
+        <div class="tl-label">UnityPoint Health-Meriter</div>
+        <div class="tl-bar-container">
+            <div class="tl-bar" style="width:51.3%;background:#dc2626;" title="577 days – Jan 2028"></div>
+            <span class="tl-days">577d &middot; Jan 2028</span>
+        </div>
+    </div>
+<div class="tl-row">
+        <div class="tl-label">Precise Systems, Inc.</div>
+        <div class="tl-bar-container">
+            <div class="tl-bar" style="width:56.6%;background:#d97706;" title="636 days – Feb 2028"></div>
+            <span class="tl-days">636d &middot; Feb 2028</span>
+        </div>
+    </div>
+<div class="tl-row">
+        <div class="tl-label">Wilmer Cutler Pickering Hale and Dorr LLP</div>
+        <div class="tl-bar-container">
+            <div class="tl-bar" style="width:59.4%;background:#d97706;" title="668 days – Apr 2028"></div>
+            <span class="tl-days">668d &middot; Apr 2028</span>
+        </div>
+    </div>
+<div class="tl-row">
+        <div class="tl-label">Partnership HealthPlan of California</div>
+        <div class="tl-bar-container">
+            <div class="tl-bar" style="width:100.0%;background:#d97706;" title="1124 days – Jul 2029"></div>
+            <span class="tl-days">1124d &middot; Jul 2029</span>
+        </div>
+    </div>
+
+    <div style="margin-top:10px;display:flex;gap:16px;font-size:11px;color:#64748b;">
+        <span><span style="display:inline-block;width:12px;height:12px;background:#16a34a;border-radius:2px;vertical-align:middle;margin-right:4px;"></span>Engagement &ge;80%</span>
+        <span><span style="display:inline-block;width:12px;height:12px;background:#d97706;border-radius:2px;vertical-align:middle;margin-right:4px;"></span>Engagement 50–79%</span>
+        <span><span style="display:inline-block;width:12px;height:12px;background:#dc2626;border-radius:2px;vertical-align:middle;margin-right:4px;"></span>Engagement &lt;50%</span>
+    </div>
+</div>
+
+<!-- Risk Summary -->
+<div class="risk-section">
+    <h2>Risk Summary</h2>
+    <div class="risk-grid">
+        <div class="risk-card">
+            <div class="risk-header">
+                <span class="risk-name">UnityPoint Health-Meriter</span>
+                <span class="risk-arr">$108,605 ARR</span>
+            </div>
+            <div class="risk-flags"><span class="risk-flag">NPS: 3.0 (Detractor)</span><span class="risk-flag">Engagement: 40%</span></div>
+        </div>
+<div class="risk-card">
+            <div class="risk-header">
+                <span class="risk-name">Precise Systems, Inc.</span>
+                <span class="risk-arr">$155,000 ARR</span>
+            </div>
+            <div class="risk-flags"><span class="risk-flag">NPS: 6.0 (Detractor)</span><span class="risk-flag">1 Active At-Risk Alert(s)</span><span class="risk-flag">Services Engagement: 25%</span></div>
+        </div>
+<div class="risk-card">
+            <div class="risk-header">
+                <span class="risk-name">Public Health Management Corporation</span>
+                <span class="risk-arr">$111,329 ARR</span>
+            </div>
+            <div class="risk-flags"><span class="risk-flag">Engagement: 20%</span><span class="risk-flag">Services Engagement: 0%</span></div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Portfolio Health Grid -->
+<div class="table-section">
+    <div class="table-header">
+        <h2>Portfolio Health Grid</h2>
+        <input type="text" class="search-input" id="searchInput" placeholder="Filter accounts..." />
+    </div>
+    <table id="portfolioTable">
+        <thead>
+            <tr>
+                <th data-col="0" data-type="text">Account Name<span class="sort-arrow"></span></th>
+                <th data-col="1" data-type="num">ARR<span class="sort-arrow"></span></th>
+                <th data-col="2" data-type="text">Industry<span class="sort-arrow"></span></th>
+                <th data-col="3" data-type="date">Next Renewal<span class="sort-arrow"></span></th>
+                <th data-col="4" data-type="num">Days Out<span class="sort-arrow"></span></th>
+                <th data-col="5" data-type="num">Engagement<span class="sort-arrow"></span></th>
+                <th data-col="6" data-type="num">NPS<span class="sort-arrow"></span></th>
+                <th data-col="7" data-type="num">Services %<span class="sort-arrow"></span></th>
+                <th data-col="8" data-type="num">Cross-Sell<span class="sort-arrow"></span></th>
+                <th data-col="9" data-type="num">At-Risk<span class="sort-arrow"></span></th>
+                <th data-col="10" data-type="text">Site Review<span class="sort-arrow"></span></th>
+                <th data-col="11" data-type="text">F2F<span class="sort-arrow"></span></th>
+                <th data-col="12" data-type="text">Products<span class="sort-arrow"></span></th>
+                <th data-col="13" data-type="num">Open Cases<span class="sort-arrow"></span></th>
+                <th>Links</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <tr data-name="groupm" data-arr="314000" data-days="62" data-eng="100" data-nps="0">
+        <td class="name-cell"><a href="https://andrewspollard.github.io/groupm-account-cockpit/" class="acct-link" title="Open Cockpit">GroupM</a></td>
+        <td class="num-cell">$314,000</td>
+        <td class="text-cell">Advertising & Marketing</td>
+        <td class="text-cell">Aug 04, 2026</td>
+        <td class="num-cell red">62</td>
+        <td class="num-cell green">100%</td>
+        <td class="num-cell muted">—</td>
+        <td class="num-cell green">100%</td>
+        <td class="num-cell">100</td>
+        <td class="num-cell green">0</td>
+        <td class="text-cell green">OK</td>
+        <td class="text-cell green">OK</td>
+        <td class="text-cell products-cell">Onboarding, Other</td>
+        <td class="num-cell">22</td>
+        <td class="link-cell"><a href="https://silkroad.lightning.force.com/lightning/r/Account/0016000000Iu3CrAAJ/view" target="_blank" class="sfdc-link">SFDC</a></td>
+    </tr>
+<tr data-name="partnership healthplan of california" data-arr="228198.12" data-days="1124" data-eng="60" data-nps="0">
+        <td class="name-cell"><a href="#" class="acct-link" title="Open Cockpit">Partnership HealthPlan of California</a></td>
+        <td class="num-cell">$228,198</td>
+        <td class="text-cell">Non-Profit & Charitable Organizations</td>
+        <td class="text-cell">Jul 01, 2029</td>
+        <td class="num-cell green">1124</td>
+        <td class="num-cell amber">60%</td>
+        <td class="num-cell muted">—</td>
+        <td class="num-cell green">75%</td>
+        <td class="num-cell">99</td>
+        <td class="num-cell green">0</td>
+        <td class="text-cell green">OK</td>
+        <td class="text-cell red">Overdue</td>
+        <td class="text-cell products-cell">Performance, Learning</td>
+        <td class="num-cell">3</td>
+        <td class="link-cell"><a href="https://silkroad.lightning.force.com/lightning/r/Account/0016000000ocSW4AAM/view" target="_blank" class="sfdc-link">SFDC</a></td>
+    </tr>
+<tr data-name="precise systems, inc." data-arr="155000" data-days="636" data-eng="60" data-nps="6">
+        <td class="name-cell"><a href="#" class="acct-link" title="Open Cockpit">Precise Systems, Inc.</a></td>
+        <td class="num-cell">$155,000</td>
+        <td class="text-cell">Architecture, Engineering & Design</td>
+        <td class="text-cell">Feb 29, 2028</td>
+        <td class="num-cell green">636</td>
+        <td class="num-cell amber">60%</td>
+        <td class="num-cell red">6.0</td>
+        <td class="num-cell red">25%</td>
+        <td class="num-cell">9</td>
+        <td class="num-cell red">1</td>
+        <td class="text-cell red">Overdue</td>
+        <td class="text-cell red">Overdue</td>
+        <td class="text-cell products-cell">Recruiting, Onboarding, Other, Managed Services</td>
+        <td class="num-cell">1</td>
+        <td class="link-cell"><a href="https://silkroad.lightning.force.com/lightning/r/Account/0016000000jpP6HAAU/view" target="_blank" class="sfdc-link">SFDC</a></td>
+    </tr>
+<tr data-name="public health management corporation" data-arr="111328.98" data-days="149" data-eng="20" data-nps="0">
+        <td class="name-cell"><a href="#" class="acct-link" title="Open Cockpit">Public Health Management Corporation</a></td>
+        <td class="num-cell">$111,329</td>
+        <td class="text-cell">Non-Profit & Charitable Organizations</td>
+        <td class="text-cell">Oct 30, 2026</td>
+        <td class="num-cell amber">149</td>
+        <td class="num-cell red">20%</td>
+        <td class="num-cell muted">—</td>
+        <td class="num-cell red">0%</td>
+        <td class="num-cell">99</td>
+        <td class="num-cell green">0</td>
+        <td class="text-cell red">Overdue</td>
+        <td class="text-cell red">Overdue</td>
+        <td class="text-cell products-cell">Learning</td>
+        <td class="num-cell">2</td>
+        <td class="link-cell"><a href="https://silkroad.lightning.force.com/lightning/r/Account/0016000000jrhz1AAA/view" target="_blank" class="sfdc-link">SFDC</a></td>
+    </tr>
+<tr data-name="unitypoint health-meriter" data-arr="108605" data-days="577" data-eng="40" data-nps="3">
+        <td class="name-cell"><a href="#" class="acct-link" title="Open Cockpit">UnityPoint Health-Meriter</a></td>
+        <td class="num-cell">$108,605</td>
+        <td class="text-cell">Hospitals & Physicians Clinics</td>
+        <td class="text-cell">Jan 01, 2028</td>
+        <td class="num-cell green">577</td>
+        <td class="num-cell red">40%</td>
+        <td class="num-cell red">3.0</td>
+        <td class="num-cell amber">50%</td>
+        <td class="num-cell">—</td>
+        <td class="num-cell green">0</td>
+        <td class="text-cell green">OK</td>
+        <td class="text-cell red">Overdue</td>
+        <td class="text-cell products-cell">Performance</td>
+        <td class="num-cell">0</td>
+        <td class="link-cell"><a href="https://silkroad.lightning.force.com/lightning/r/Account/0016000000Iu34aAAB/view" target="_blank" class="sfdc-link">SFDC</a></td>
+    </tr>
+<tr data-name="sheppard, mullin, richter & hampton llp" data-arr="97000" data-days="485" data-eng="50" data-nps="0">
+        <td class="name-cell"><a href="#" class="acct-link" title="Open Cockpit">Sheppard, Mullin, Richter & Hampton LLP</a></td>
+        <td class="num-cell">$97,000</td>
+        <td class="text-cell">Law Firms & Legal Services</td>
+        <td class="text-cell">Oct 01, 2027</td>
+        <td class="num-cell green">485</td>
+        <td class="num-cell amber">50%</td>
+        <td class="num-cell muted">—</td>
+        <td class="num-cell green">100%</td>
+        <td class="num-cell">100</td>
+        <td class="num-cell green">0</td>
+        <td class="text-cell green">OK</td>
+        <td class="text-cell green">OK</td>
+        <td class="text-cell products-cell">Onboarding, Managed Services</td>
+        <td class="num-cell">16</td>
+        <td class="link-cell"><a href="https://silkroad.lightning.force.com/lightning/r/Account/0016000000ItvaFAAR/view" target="_blank" class="sfdc-link">SFDC</a></td>
+    </tr>
+<tr data-name="tri pointe homes" data-arr="89245.92" data-days="181" data-eng="75" data-nps="0">
+        <td class="name-cell"><a href="#" class="acct-link" title="Open Cockpit">Tri Pointe Homes</a></td>
+        <td class="num-cell">$89,246</td>
+        <td class="text-cell">Commercial & Residential Construction</td>
+        <td class="text-cell">Dec 01, 2026</td>
+        <td class="num-cell green">181</td>
+        <td class="num-cell amber">75%</td>
+        <td class="num-cell muted">—</td>
+        <td class="num-cell green">100%</td>
+        <td class="num-cell">93</td>
+        <td class="num-cell green">0</td>
+        <td class="text-cell green">OK</td>
+        <td class="text-cell green">OK</td>
+        <td class="text-cell products-cell">Managed Services, Performance</td>
+        <td class="num-cell">0</td>
+        <td class="link-cell"><a href="https://silkroad.lightning.force.com/lightning/r/Account/0013200001Aj2FdAAJ/view" target="_blank" class="sfdc-link">SFDC</a></td>
+    </tr>
+<tr data-name="wilmer cutler pickering hale and dorr llp" data-arr="84925.41" data-days="668" data-eng="75" data-nps="0">
+        <td class="name-cell"><a href="#" class="acct-link" title="Open Cockpit">Wilmer Cutler Pickering Hale and Dorr LLP</a></td>
+        <td class="num-cell">$84,925</td>
+        <td class="text-cell">Law Firms & Legal Services</td>
+        <td class="text-cell">Apr 01, 2028</td>
+        <td class="num-cell green">668</td>
+        <td class="num-cell amber">75%</td>
+        <td class="num-cell muted">—</td>
+        <td class="num-cell green">75%</td>
+        <td class="num-cell">100</td>
+        <td class="num-cell green">0</td>
+        <td class="text-cell red">Overdue</td>
+        <td class="text-cell green">OK</td>
+        <td class="text-cell products-cell">Other, Onboarding, Recruiting</td>
+        <td class="num-cell">2</td>
+        <td class="link-cell"><a href="https://silkroad.lightning.force.com/lightning/r/Account/0016000000ItvbzAAB/view" target="_blank" class="sfdc-link">SFDC</a></td>
+    </tr>
+<tr data-name="johnson, mirmiran & thompson, inc." data-arr="84545.46" data-days="520" data-eng="100" data-nps="0">
+        <td class="name-cell"><a href="#" class="acct-link" title="Open Cockpit">Johnson, Mirmiran & Thompson, Inc.</a></td>
+        <td class="num-cell">$84,545</td>
+        <td class="text-cell">Architecture, Engineering & Design</td>
+        <td class="text-cell">Nov 05, 2027</td>
+        <td class="num-cell green">520</td>
+        <td class="num-cell green">100%</td>
+        <td class="num-cell muted">—</td>
+        <td class="num-cell green">100%</td>
+        <td class="num-cell">99</td>
+        <td class="num-cell green">0</td>
+        <td class="text-cell green">OK</td>
+        <td class="text-cell green">OK</td>
+        <td class="text-cell products-cell">Recruiting, Onboarding</td>
+        <td class="num-cell">6</td>
+        <td class="link-cell"><a href="https://silkroad.lightning.force.com/lightning/r/Account/0016000000Iu2jxAAB/view" target="_blank" class="sfdc-link">SFDC</a></td>
+    </tr>
+<tr data-name="marketaxess corporation" data-arr="78462" data-days="355" data-eng="100" data-nps="0">
+        <td class="name-cell"><a href="#" class="acct-link" title="Open Cockpit">MarketAxess Corporation</a></td>
+        <td class="num-cell">$78,462</td>
+        <td class="text-cell">Lending & Brokerage</td>
+        <td class="text-cell">May 24, 2027</td>
+        <td class="num-cell green">355</td>
+        <td class="num-cell green">100%</td>
+        <td class="num-cell muted">—</td>
+        <td class="num-cell amber">50%</td>
+        <td class="num-cell">99</td>
+        <td class="num-cell green">0</td>
+        <td class="text-cell green">OK</td>
+        <td class="text-cell green">OK</td>
+        <td class="text-cell products-cell">Performance, Other</td>
+        <td class="num-cell">0</td>
+        <td class="link-cell"><a href="https://silkroad.lightning.force.com/lightning/r/Account/0016000000N4dFpAAJ/view" target="_blank" class="sfdc-link">SFDC</a></td>
+    </tr>
+<tr data-name="viejas casino & resort" data-arr="77334.85" data-days="90" data-eng="75" data-nps="0">
+        <td class="name-cell"><a href="#" class="acct-link" title="Open Cockpit">Viejas Casino & Resort</a></td>
+        <td class="num-cell">$77,335</td>
+        <td class="text-cell">Gambling & Gaming</td>
+        <td class="text-cell">Sep 01, 2026</td>
+        <td class="num-cell red">90</td>
+        <td class="num-cell amber">75%</td>
+        <td class="num-cell muted">—</td>
+        <td class="num-cell amber">50%</td>
+        <td class="num-cell">96</td>
+        <td class="num-cell green">0</td>
+        <td class="text-cell green">OK</td>
+        <td class="text-cell green">OK</td>
+        <td class="text-cell products-cell">Onboarding, Recruiting, Other</td>
+        <td class="num-cell">2</td>
+        <td class="link-cell"><a href="https://silkroad.lightning.force.com/lightning/r/Account/0016000000Iu2YSAAZ/view" target="_blank" class="sfdc-link">SFDC</a></td>
+    </tr>
+<tr data-name="crane pumps & systems" data-arr="18500" data-days="212" data-eng="100" data-nps="0">
+        <td class="name-cell"><a href="#" class="acct-link" title="Open Cockpit">Crane Pumps & Systems</a></td>
+        <td class="num-cell">$18,500</td>
+        <td class="text-cell">Industrial Machinery & Equipment</td>
+        <td class="text-cell">Jan 01, 2027</td>
+        <td class="num-cell green">212</td>
+        <td class="num-cell green">100%</td>
+        <td class="num-cell muted">—</td>
+        <td class="num-cell green">100%</td>
+        <td class="num-cell">—</td>
+        <td class="num-cell green">0</td>
+        <td class="text-cell green">OK</td>
+        <td class="text-cell green">OK</td>
+        <td class="text-cell products-cell">Recruiting, Other</td>
+        <td class="num-cell">0</td>
+        <td class="link-cell"><a href="https://silkroad.lightning.force.com/lightning/r/Account/001Vs00000KL4ghIAD/view" target="_blank" class="sfdc-link">SFDC</a></td>
+    </tr>
+
+        </tbody>
+    </table>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+    Data sourced from Salesforce (silkroad) &middot; Generated June 3, 2026 &middot; CSM Portfolio Dashboard v1.0
+</div>
+
+</div>
+
+<script>
+// Table sorting
+(function() {
+    const table = document.getElementById('portfolioTable');
+    const headers = table.querySelectorAll('th[data-col]');
+    let sortCol = 1;
+    let sortDir = -1; // desc
+
+    function parseVal(td, type) {
+        const text = td.textContent.trim().replace(/[$,%]/g, '');
+        if (text === '—' || text === '') return type === 'num' ? -Infinity : '';
+        if (type === 'num') return parseFloat(text) || 0;
+        if (type === 'date') {
+            const d = new Date(text);
+            return isNaN(d) ? 0 : d.getTime();
+        }
+        return text.toLowerCase();
+    }
+
+    function sortTable(col, type) {
+        const tbody = document.getElementById('tableBody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        
+        rows.sort((a, b) => {
+            const aVal = parseVal(a.cells[col], type);
+            const bVal = parseVal(b.cells[col], type);
+            if (aVal < bVal) return -1 * sortDir;
+            if (aVal > bVal) return 1 * sortDir;
+            return 0;
+        });
+        
+        rows.forEach(r => tbody.appendChild(r));
+    }
+
+    headers.forEach(th => {
+        th.addEventListener('click', function() {
+            const col = parseInt(this.dataset.col);
+            const type = this.dataset.type;
+            
+            if (sortCol === col) {
+                sortDir *= -1;
+            } else {
+                sortCol = col;
+                sortDir = 1;
+            }
+            
+            // Update arrows
+            headers.forEach(h => h.querySelector('.sort-arrow').textContent = '');
+            this.querySelector('.sort-arrow').textContent = sortDir === 1 ? ' ▲' : ' ▼';
+            
+            sortTable(col, type);
+        });
+    });
+
+    // Search/filter
+    document.getElementById('searchInput').addEventListener('input', function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#tableBody tr');
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(filter) ? '' : 'none';
+        });
+    });
+})();
+</script>
+</body>
+</html>
