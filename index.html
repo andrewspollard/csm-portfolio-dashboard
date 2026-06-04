@@ -201,6 +201,11 @@ tr:hover td { background: #f8fafc; }
     .header { flex-direction: column; align-items: flex-start; gap: 8px; }
     .header-meta { text-align: left; }
 }
+
+/* Metric Tooltips */
+.metric-tip { position:relative; display:inline-flex; align-items:center; justify-content:center; width:14px; height:14px; border-radius:50%; background:#e2e8f0; color:#64748b; font-size:9px; font-weight:700; cursor:help; margin-left:4px; vertical-align:middle; }
+.metric-tip .tip-text { visibility:hidden; opacity:0; position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%); background:#1a1f2e; color:#fff; padding:8px 12px; border-radius:6px; font-size:11px; font-weight:400; white-space:normal; max-width:280px; z-index:200; line-height:1.4; box-shadow:0 4px 12px rgba(0,0,0,.15); transition:opacity .15s,visibility .15s; text-transform:none; letter-spacing:normal; }
+.metric-tip:hover .tip-text { visibility:visible; opacity:1; }
 </style>
 </head>
 <body>
@@ -221,27 +226,27 @@ tr:hover td { background: #f8fafc; }
 <!-- KPI Strip -->
 <div class="kpi-strip">
     <div class="kpi-card">
-        <div class="kpi-label">Total Portfolio ARR</div>
+        <div class="kpi-label">Total Portfolio ARR<span class="metric-tip">?<span class="tip-text">Sum of Subscription_ARR_ALL_PRODUCTS__c across all 12 accounts. Source: SFDC Account object.</span></span></div>
         <div class="kpi-value">$1,447,146</div>
         <div class="kpi-sub">12 active accounts</div>
     </div>
     <div class="kpi-card">
-        <div class="kpi-label">Avg Engagement Score</div>
+        <div class="kpi-label">Avg Engagement Score<span class="metric-tip">?<span class="tip-text">Average of Customer_Engagement_Score__c (same field as CSM Dashboard &#39;Customer Engagement Score on CSM Accts&#39; widget, currently 66.6% org-wide). Color: &ge;80% green, 50-79% amber, &lt;50% red. Source: SFDC Account object.</span></span></div>
         <div class="kpi-value green">71.2%</div>
         <div class="kpi-sub">Across all accounts</div>
     </div>
     <div class="kpi-card">
-        <div class="kpi-label">Accounts At Risk</div>
+        <div class="kpi-label">Accounts At Risk<span class="metric-tip">?<span class="tip-text">Count of accounts where Count_of_Active_At_Risk_Alerts__c &gt; 0. Source: SFDC Account object.</span></span></div>
         <div class="kpi-value red">1</div>
         <div class="kpi-sub">Active at-risk alerts</div>
     </div>
     <div class="kpi-card">
-        <div class="kpi-label">Next Renewal</div>
+        <div class="kpi-label">Next Renewal<span class="metric-tip">?<span class="tip-text">Nearest Next_Renewal_Date__c across portfolio. Source: SFDC Account object.</span></span></div>
         <div class="kpi-value" style="font-size:18px;">Aug 04, 2026</div>
         <div class="kpi-sub">GroupM</div>
     </div>
     <div class="kpi-card">
-        <div class="kpi-label">Overdue F2F</div>
+        <div class="kpi-label">Overdue F2F<span class="metric-tip">?<span class="tip-text">Count where Onsite_F2F_Overdue__c = true. Source: SFDC Account object.</span></span></div>
         <div class="kpi-value red">4</div>
         <div class="kpi-sub">Accounts needing onsite visit</div>
     </div>
@@ -393,21 +398,21 @@ tr:hover td { background: #f8fafc; }
     <table id="portfolioTable">
         <thead>
             <tr>
-                <th data-col="0" data-type="text">Account Name<span class="sort-arrow"></span></th>
-                <th data-col="1" data-type="num">ARR<span class="sort-arrow"></span></th>
-                <th data-col="2" data-type="text">Industry<span class="sort-arrow"></span></th>
-                <th data-col="3" data-type="date">Next Renewal<span class="sort-arrow"></span></th>
-                <th data-col="4" data-type="num">Days Out<span class="sort-arrow"></span></th>
-                <th data-col="5" data-type="num">Engagement<span class="sort-arrow"></span></th>
-                <th data-col="6" data-type="num">NPS<span class="sort-arrow"></span></th>
-                <th data-col="7" data-type="num">Services %<span class="sort-arrow"></span></th>
-                <th data-col="8" data-type="num">Cross-Sell<span class="sort-arrow"></span></th>
-                <th data-col="9" data-type="num">At-Risk<span class="sort-arrow"></span></th>
-                <th data-col="10" data-type="text">Site Review<span class="sort-arrow"></span></th>
-                <th data-col="11" data-type="text">F2F<span class="sort-arrow"></span></th>
-                <th data-col="12" data-type="text">Products<span class="sort-arrow"></span></th>
-                <th data-col="13" data-type="num">Open Cases<span class="sort-arrow"></span></th>
-                <th>Links</th>
+                <th data-col="0" data-type="text">Account Name<span class="metric-tip">?<span class="tip-text">SFDC Account.Name</span></span><span class="sort-arrow"></span></th>
+                <th data-col="1" data-type="num">ARR<span class="metric-tip">?<span class="tip-text">Subscription_ARR_ALL_PRODUCTS__c. Note: this is subscription ARR only, not total ACV (which may include services/one-time components).</span></span><span class="sort-arrow"></span></th>
+                <th data-col="2" data-type="text">Industry<span class="metric-tip">?<span class="tip-text">SFDC Account.Industry</span></span><span class="sort-arrow"></span></th>
+                <th data-col="3" data-type="date">Next Renewal<span class="metric-tip">?<span class="tip-text">Next_Renewal_Date__c. Source: SFDC Account object.</span></span><span class="sort-arrow"></span></th>
+                <th data-col="4" data-type="num">Days Out<span class="metric-tip">?<span class="tip-text">Calculated: Next_Renewal_Date__c minus today.</span></span><span class="sort-arrow"></span></th>
+                <th data-col="5" data-type="num">Engagement<span class="metric-tip">?<span class="tip-text">Customer_Engagement_Score__c. Same metric as CSM Dashboard. Color: &ge;80 green, 50-79 amber, &lt;50 red.</span></span><span class="sort-arrow"></span></th>
+                <th data-col="6" data-type="num">NPS<span class="metric-tip">?<span class="tip-text">Average_NPS_Score_SFDC__c. Scale: 0-10. Color: 9-10 green (promoter), 7-8 amber (passive), 0-6 red (detractor).</span></span><span class="sort-arrow"></span></th>
+                <th data-col="7" data-type="num">Services %<span class="metric-tip">?<span class="tip-text">Services_Engagement_Score_Percent__c. Measures services utilization against contracted hours. Color: &ge;60 green, 30-59 amber, &lt;30 red.</span></span><span class="sort-arrow"></span></th>
+                <th data-col="8" data-type="num">Cross-Sell<span class="metric-tip">?<span class="tip-text">Cross_Sell_Score__c. Higher = more expansion potential. Scale/methodology not documented in SFDC.</span></span><span class="sort-arrow"></span></th>
+                <th data-col="9" data-type="num">At-Risk<span class="metric-tip">?<span class="tip-text">Count_of_Active_At_Risk_Alerts__c. 0 = green, &ge;1 = red.</span></span><span class="sort-arrow"></span></th>
+                <th data-col="10" data-type="text">Site Review<span class="metric-tip">?<span class="tip-text">Site_Review_Overdue__c (boolean). True = overdue = red. Standard cadence: quarterly.</span></span><span class="sort-arrow"></span></th>
+                <th data-col="11" data-type="text">F2F<span class="metric-tip">?<span class="tip-text">Onsite_F2F_Overdue__c (boolean). True = never done or overdue = red.</span></span><span class="sort-arrow"></span></th>
+                <th data-col="12" data-type="text">Products<span class="metric-tip">?<span class="tip-text">Active_Products2__c. Comma-separated list of active product names.</span></span><span class="sort-arrow"></span></th>
+                <th data-col="13" data-type="num">Open Cases<span class="metric-tip">?<span class="tip-text">Count of Case records where IsClosed = false for this account.</span></span><span class="sort-arrow"></span></th>
+                <th>Links<span class="metric-tip">?<span class="tip-text">Link to individual account cockpit on GitHub Pages (when available).</span></span></th>
             </tr>
         </thead>
         <tbody id="tableBody">
